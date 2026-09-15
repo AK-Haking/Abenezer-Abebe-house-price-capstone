@@ -1,117 +1,91 @@
-# LaunchML Week 4 House Price Prediction Capstone
+# House Price Prediction — LaunchML Week 4 Capstone
 
-This repository contains the student materials for the LaunchML Week 4 individual mini capstone. Each student will prepare a synthetic house-price dataset, train a **Linear Regression** model, evaluate its predictions, explain the findings, and submit the completed work through an individual GitHub repository.
+**Student:** Abenezer Abebe
+**Repository:** https://github.com/AK-Haking/Abenezer-Abebe-house-price-capstone
 
-## Project question
+## About this project
 
-> **How accurately can a Linear Regression model predict house sale prices from the available property features?**
+This project predicts house sale prices from property features using a **Linear Regression** model, built as an individual capstone for the LaunchML program. The goal was to work through one complete machine-learning workflow — from imperfect, real-world-style data to an explained, evaluated result — rather than to build the single "best" possible model.
 
-## Important scope rule
+**Project question:** How accurately can a Linear Regression model predict house sale prices from the available property features?
 
-Students must use **Linear Regression only**. Do not replace it with Gradient Boosting, Random Forest, Decision Tree, K-Nearest Neighbors, neural networks, or another predictive model. The goal is to understand one complete machine-learning workflow from imperfect data to an explained result.
+## Dataset
 
-## Dataset disclaimer
+`data/launchml_house_prices.csv` — the LaunchML house-price dataset, a realistic **synthetic educational dataset** (1,100 rows, 11 predictors, one target column: `sale_price`). It contains a mix of numerical and categorical features and intentional missing values for cleaning practice.
 
-`data/launchml_house_prices.csv` is a realistic synthetic educational dataset. It is not official property-market data and must not be presented as evidence about actual house prices. The dataset contains 1,100 rows, 11 predictors, one target column, numerical and categorical features, and intentional missing values for cleaning practice.
+> This is synthetic data created for learning purposes. It is not official real-estate market data and should not be treated as evidence about actual house prices.
 
-## Repository contents
+## Model
 
-| Path | Purpose |
+**Linear Regression only** (scikit-learn's `LinearRegression`), as required by the project scope. No other model type (e.g. decision trees, Random Forest, Gradient Boosting) was used or compared.
+
+## How missing values were handled
+
+The dataset had missing values in 7 columns: `lot_area_sqft` (25), `bathrooms` (12), `garage_capacity` (43), `basement_area_sqft` (54), `distance_to_city_center_km` (23), `neighborhood` (20), and `renovation_status` (26). No missing values were found in the target column, `sale_price`, and no duplicate rows were found.
+
+- Missing **numerical** predictor values were filled with the **median** of each column, using a scikit-learn `SimpleImputer` inside a `Pipeline`, to avoid extreme values skewing the fill.
+- Missing **categorical** predictor values (`neighborhood`, `renovation_status`) were filled with the **most frequent category** in that column, then one-hot encoded.
+- All imputation was fitted only on the training split, then applied to the test split, to avoid data leakage.
+
+## Evaluation metrics calculated
+
+- Mean Absolute Error (MAE)
+- Mean Squared Error (MSE)
+- Root Mean Squared Error (RMSE)
+- R-squared (R²)
+
+| Metric | Value |
 |---|---|
-| `student_project_guide.md` | Complete project instructions |
-| `data/launchml_house_prices.csv` | Supplied dataset |
-| `data/data_dictionary.md` | Column descriptions and missing-value expectations |
-| `notebooks/student_project_template.ipynb` | Guided notebook workflow |
-| `reports/report_requirements.md` | Written-report rules |
-| `reports/report_template.md` | Report structure students can complete |
-| `requirements.txt` | Required Python packages |
-| `submissions/` | Optional local organization folder |
+| MAE | $83,051 |
+| MSE | 1.19 × 10¹⁰ |
+| RMSE | $109,140 |
+| R²  | 0.881 |
 
-## Required workflow
+## Main findings
 
-Students should follow this sequence:
+The model explains about 88.1% of the variance in sale price on the held-out test set (R² = 0.881), with a typical prediction error of roughly $83,000 (MAE). `house_area_sqft` showed the clearest positive relationship with price during exploration. Predictions were closest to actual prices for mid-range homes, and residuals were centered near zero overall, but the model's errors grew larger and more variable for higher-priced properties — suggesting the linear model underfits somewhat at the top end of the market. See `reports/completed_report.md` for the full write-up.
 
-```text
-Problem definition
-    ↓
-Load and inspect data
-    ↓
-Handle missing values and duplicates
-    ↓
-Explore relationships with Matplotlib
-    ↓
-Encode categorical features
-    ↓
-Split training and testing data
-    ↓
-Train Linear Regression
-    ↓
-Evaluate with MAE, MSE, RMSE, and R²
-    ↓
-Create three required visualizations
-    ↓
-Interpret results and limitations
-    ↓
-Write report and prepare presentation
-    ↓
-Publish the final work on GitHub
+## Repository structure
+
+```
+Abenezer-Abebe-house-price-capstone/
+├── README.md
+├── requirements.txt
+├── data/
+│   ├── launchml_house_prices.csv
+│   └── data_dictionary.md
+├── notebooks/
+│   └── completed_student_project.ipynb
+├── reports/
+│   └── completed_report.md
+└── images/
+    ├── visualization_1_house_area_vs_price.png
+    ├── visualization_2_actual_vs_predicted.png
+    └── visualization_3_residuals.png
 ```
 
-## Required student submission
+## How to run this project
 
-Each student must submit an individual GitHub repository containing:
+1. Clone this repository:
+   ```
+   git clone https://github.com/AK-Haking/Abenezer-Abebe-house-price-capstone.git
+   cd Abenezer-Abebe-house-price-capstone
+   ```
+2. Install the required libraries:
+   ```
+   pip install -r requirements.txt
+   ```
+3. Open the notebook:
+   ```
+   jupyter notebook notebooks/completed_student_project.ipynb
+   ```
+   (Or upload it to Google Colab, along with `data/launchml_house_prices.csv`.)
+4. Run all cells from top to bottom.
 
-```text
-README.md
-requirements.txt
-data/
-    launchml_house_prices.csv
-    data_dictionary.md
-notebooks/
-    completed_student_project.ipynb
-reports/
-    completed_report.md or completed_report.pdf
-images/
-    visualization_1_house_area_vs_price.png
-    visualization_2_actual_vs_predicted.png
-    visualization_3_residuals.png
-```
+## Limitations
 
-The completed notebook must run from top to bottom without errors. It must contain explanations as well as code.
-
-## Required visualizations
-
-The completed project must include three Matplotlib images:
-
-1. House area versus sale price, including a fitted line or clearly explained relationship.
-2. Actual versus predicted sale prices, including a perfect-prediction reference line.
-3. Prediction errors or residuals, with an explanation of visible patterns.
-
-Every figure must have a title, labeled axes, and an interpretation in the notebook or report.
-
-## Running the project locally
-
-Install the dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Open the notebook:
-
-```bash
-jupyter notebook notebooks/student_project_template.ipynb
-```
-
-In Google Colab, upload the notebook and the CSV file, then update the `DATA_PATH` variable if necessary. Students should run all cells from top to bottom before submission.
-
-## Written report and presentation
-
-The report must describe the problem, dataset, cleaning decisions, exploratory findings, Linear Regression method, evaluation metrics, visualizations, interpretation, limitations, conclusion, and reproducibility instructions.
-
-The final presentation should be short and should focus on the reasoning behind the project, the most important findings, the model metrics, one limitation, and what the student learned.
-
-## Academic integrity
-
-Students may use documentation and tutorials for learning, but submitted code and explanations must be understood and written by the student. Copying another student's analysis or presenting synthetic data as official market data is not acceptable.
-# Abenezer-Abebe-house-price-capstone
+1. The dataset is synthetic and educational — it does not reflect real market dynamics and results should not be treated as real-world property valuations.
+2. Linear Regression assumes straight-line relationships between features and price, so it cannot capture non-linear pricing patterns, which likely contributes to larger errors on higher-priced homes.
+3. Missing values were filled with medians/most-frequent categories, a simple approach that may slightly understate the true variability in those columns.
+4. A feature relating to price (like house area) does not prove it causes the price — other unmeasured factors could be responsible.
+5. With 1,100 rows (880 for training) and 11 predictors, the sample size is modest, which limits how confidently the model's patterns generalize.
